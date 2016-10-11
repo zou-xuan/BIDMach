@@ -22,9 +22,6 @@ import javax.script.ScriptEngineManager;
 import java.util.concurrent.Callable
 import javax.script.ScriptContext
 
-
-trait SerializableCallable[T] extends Callable[T] with Serializable {}
-
 class Worker(override val opts:Worker.Opts = new Worker.Options) extends Host {
 
   var listener:CommandListener = null;
@@ -45,8 +42,6 @@ class Worker(override val opts:Worker.Opts = new Worker.Options) extends Host {
     listener = new CommandListener(opts.commandSocketNum, this);
     listenerTask = executor.submit(listener);
     intp = new ScriptEngineManager().getEngineByName("scala");
-    intp.put("worker", "try");
-    intp.put("worker2", this);
   }
 
   def config(
@@ -68,7 +63,7 @@ class Worker(override val opts:Worker.Opts = new Worker.Options) extends Host {
     machine.sendTimeout = opts.sendTimeout;
     machine.recvTimeout = opts.recvTimeout;
     machine.sockBase = opts.peerSocketNum;
-    machine.start(machine.maxk);
+    machine.start(machine.maxk); // TODO: broken?
     intp.put("$imach", imach);
     val t2 = toc
     if (opts.trace > 2) log("Machine config took %4.3f secs\n" format(t2-t1))
@@ -117,7 +112,7 @@ class Worker(override val opts:Worker.Opts = new Worker.Options) extends Host {
   def stop = {
     listener.stop = true;
     listenerTask.cancel(true);
-    machine.stop;
+    if (machine != null) machine.stop;
   }
 
   def shutdown = {
