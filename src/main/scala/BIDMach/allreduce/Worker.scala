@@ -62,7 +62,7 @@ class Worker(override val opts:Worker.Opts = new Worker.Options) extends Host {
     workers = workers0;
     masterSocketAddr = masterSocketAddr0;
     if (machine != null) machine.stop;
-    machine = new Machine(null, groups, imach, M, opts.useLong, opts.bufsize, false, opts.machineTrace, opts.replicate, workers.map(x => x.toString()));
+    machine = new Machine(null, groups, imach, M, opts.useLong, opts.bufsize, false, opts.machineTrace, opts.replicate, workers);
     machine.configTimeout = opts.configTimeout;
     machine.reduceTimeout = opts.reduceTimeout;
     machine.sendTimeout = opts.sendTimeout;
